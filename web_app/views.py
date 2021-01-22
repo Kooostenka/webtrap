@@ -19,6 +19,13 @@ logging.basicConfig(
 
 class IndexView(View):
     def get(self, request):
+        data = {
+            'time': timezone.now().strftime("%d/%m/%Y, %H:%M:%S"),
+            'url': request.build_absolute_uri(),
+            'method': 'GET',
+            'status': '404',
+        }
+        logger.info(data)
         form = ContactForm()
         return render(
             request,
@@ -28,6 +35,14 @@ class IndexView(View):
 
     def post(self, request):
         form = ContactForm(request.POST)
+        data = {
+            'time': timezone.now().strftime("%d/%m/%Y, %H:%M:%S"),
+            'url': request.build_absolute_uri(),
+            'method': 'GET',
+            'status': '200',
+            'email': request.POST.get('email')
+        }
+        logger.info(data)
         if form.is_valid():
             return HttpResponse("Ok.")
         return render(
@@ -44,8 +59,7 @@ class APIView(View):
             'url': request.build_absolute_uri(),
             'method': 'GET',
             'status': '404',
-            'params': dict(request.GET),
-            'email': request.POST.get('email')
+            'params': dict(request.GET)
         }
         logger.info(data)
         return HttpResponse('Not found')
@@ -60,11 +74,10 @@ class APIView(View):
 
         data = {
             'time': timezone.now().strftime("%d/%m/%Y, %H:%M:%S"),
-            'url': request.build_absolute_url(),
+            'url': request.build_absolute_uri(),
             'method': 'POST',
             'status': status,
-            'params': dict(request.GET),
-            'email': request.POST.get('email')
+            'params': dict(request.GET)
         }
         logger.info(data)
 
